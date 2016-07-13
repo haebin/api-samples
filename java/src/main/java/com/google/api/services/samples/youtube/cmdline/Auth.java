@@ -4,14 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.CredentialRefreshListener;
 import com.google.api.client.auth.oauth2.StoredCredential;
-import com.google.api.client.auth.oauth2.TokenErrorResponse;
-import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -71,21 +67,6 @@ public class Auth {
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, scopes).setCredentialDataStore(datastore)
                 .setAccessType("offline").setApprovalPrompt("force").build();
-        /*
-         		.setRefreshListeners(new ArrayList<CredentialRefreshListener>() {{ 
-					new CredentialRefreshListener() {
-						@Override
-						public void onTokenResponse(final Credential credential, final TokenResponse tokenResponse) throws IOException {
-							//LOGGER.info("Token refreshed");
-						}
-	
-						@Override
-						public void onTokenErrorResponse(final Credential credential, final TokenErrorResponse tokenErrorResponse) throws IOException {
-							//LOGGER.error("Token refresh error {}", tokenErrorResponse.toPrettyString());
-						}
-					};
-                }})
-         */
         
         // Build the local server and bind it to port 8080
         LocalServerReceiver localReceiver = new LocalServerReceiver.Builder().setPort(8080).build();
