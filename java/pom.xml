@@ -14,6 +14,7 @@
     	
         <project.youtube.version>v3-rev175-1.22.0</project.youtube.version>
         <project.youtube.analytics.version>v1-rev61-1.22.0</project.youtube.analytics.version>
+        <project.youtube.reporting.version>v1-rev9-1.22.0</project.youtube.reporting.version>
         <project.http.version>1.22.0</project.http.version>
         <project.oauth.version>1.22.0</project.oauth.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,8 +43,15 @@
             <version>${project.youtube.analytics.version}</version>
         </dependency>
         
+        <!-- Required for reporting -->
+        <dependency>
+		    <groupId>com.google.apis</groupId>
+		    <artifactId>google-api-services-youtubereporting</artifactId>
+		    <version>${project.youtube.reporting.version}</version>
+		</dependency>
+        
         <!-- Required for audio processing (Cuetone ads sample, local install only) -->
-        <!-- Download from https://github.com/JorenSix/TarsosDSP -->
+        <!-- Download from https://github.com/JorenSix/TarsosDSP v2.3 -->
         <!-- git clone -b v2.3 https://github.com/JorenSix/TarsosDSP.git -->
         <!-- mvn install:install-file -Dfile=/Users/SOMEBODY/Workspace/TarsosDSP/build/TarsosDSP-2.3.jar -DgroupId=be.tarsos.dsp -DartifactId=TarsosDSP -Dversion=2.3 -Dpackaging=jar -->
 		<dependency>
