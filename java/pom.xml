@@ -44,7 +44,7 @@
         
         <!-- Required for audio processing (Cuetone ads sample, local install only) -->
         <!-- Download from https://github.com/JorenSix/TarsosDSP -->
-        <!-- git clone --branch v2.3 https://github.com/JorenSix/TarsosDSP.git -->
+        <!-- git clone -b v2.3 https://github.com/JorenSix/TarsosDSP.git -->
         <!-- mvn install:install-file -Dfile=/Users/SOMEBODY/Workspace/TarsosDSP/build/TarsosDSP-2.3.jar -DgroupId=be.tarsos.dsp -DartifactId=TarsosDSP -Dversion=2.3 -Dpackaging=jar -->
 		<dependency>
             <groupId>be.tarsos.dsp</groupId>
