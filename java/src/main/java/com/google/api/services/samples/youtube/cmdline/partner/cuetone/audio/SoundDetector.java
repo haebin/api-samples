@@ -45,16 +45,12 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
@@ -72,11 +68,7 @@ import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
  * @author haebin
  *
  */
-public class SoundDetector extends JFrame implements AudioProcessor {
-
-	/**
-	 * 
-	 */
+public class SoundDetector extends JFrame implements AudioProcessor, LogViewer {
 	private static final long serialVersionUID = 3501426880288136245L;
 
 	private final JTextArea textArea;
@@ -330,7 +322,7 @@ public class SoundDetector extends JFrame implements AudioProcessor {
 
 		// add a processor, handle percussion event.
 		silenceDetector = new SilenceDetector(threshold,false);
-		pitchDetector = new PitchProcessor(PitchEstimationAlgorithm.FFT_YIN, sampleRate, bufferSize, new YtnSignalHandler(adsManager, textArea));
+		pitchDetector = new PitchProcessor(PitchEstimationAlgorithm.FFT_YIN, sampleRate, bufferSize, new DTMFSignalHandler(adsManager, this));
 		
 		dispatcher.addAudioProcessor(pitchDetector);
 		dispatcher.addAudioProcessor(silenceDetector);
@@ -372,8 +364,9 @@ public class SoundDetector extends JFrame implements AudioProcessor {
 		
 	}
 	
-	private void log(String message) {
-		textArea.append(message);
+	@Override
+	public void log(String message) {
+		textArea.append(message + "\n");
 		textArea.setCaretPosition(textArea.getDocument().getLength());
 	}
 }

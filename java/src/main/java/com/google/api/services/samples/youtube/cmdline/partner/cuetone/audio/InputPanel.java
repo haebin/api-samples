@@ -30,11 +30,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
 import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -52,7 +49,7 @@ public class InputPanel extends JPanel {
 	
 	public InputPanel(){
 		super(new BorderLayout());
-		this.setBorder(new TitledBorder("Make sure input lines are connected before running app."));
+		this.setBorder(new TitledBorder("Choose input"));
 		JPanel buttonPanel = new JPanel(new GridLayout(0,1));
 		ButtonGroup group = new ButtonGroup();
 		for(Mixer.Info info : Shared.getMixerInfo(false, true)){
