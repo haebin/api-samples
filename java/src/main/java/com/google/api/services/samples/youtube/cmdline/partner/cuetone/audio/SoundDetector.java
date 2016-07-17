@@ -88,6 +88,7 @@ public class SoundDetector extends JFrame implements AudioProcessor, LogViewer {
 	JTextField contentOwner = new JTextField(10);
 	JTextField video = new JTextField(5);
 	
+	private boolean verbose = true;
 	
 	public SoundDetector() {
 		
@@ -368,5 +369,10 @@ public class SoundDetector extends JFrame implements AudioProcessor, LogViewer {
 	public void log(String message) {
 		textArea.append(message + "\n");
 		textArea.setCaretPosition(textArea.getDocument().getLength());
+	}
+	
+	@Override
+	public boolean isVerbose() {
+		return verbose;
 	}
 }

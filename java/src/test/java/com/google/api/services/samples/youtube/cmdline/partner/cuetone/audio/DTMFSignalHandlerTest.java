@@ -18,6 +18,10 @@ public class DTMFSignalHandlerTest {
 		public void log(String message) {
 			System.out.println(message);
 		}
+		@Override
+		public boolean isVerbose() {
+			return true;
+		}
 	});
 	
 	@Test

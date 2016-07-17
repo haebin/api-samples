@@ -15,7 +15,7 @@ import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
 public class DTMFSignalHandler implements PitchDetectionHandler {
 	final static Logger logger = LoggerFactory.getLogger(DTMFSignalHandler.class);
 	
-	private boolean rawLog = true;
+	//private boolean rawLog = true;
 	private double echoTimeStamp = 0;
 	
 	private int signalIdx = 0;
@@ -92,17 +92,19 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 		double timeStamp = audioEvent.getTimeStamp();
 		float pitch = pitchDetectionResult.getPitch();
 		float probability = pitchDetectionResult.getProbability();
-		double rms = audioEvent.getRMS() * 100;
+		double rms = audioEvent.getRMS() * 100; // related to volume of the sound
 		
-		if(pitch < 150 || pitch > 900 || rms < 10) {
+		if(pitch < 150 || pitch > 900) {
 			// disregard noise, no timestamping
 			return ' ';
 		}
 		
-		if(rawLog) {
-			String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )", 
+		String log = "";
+		if(logViewer.isVerbose()) {
+			log = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )", 
 					timeStamp, pitch, probability, rms);
-			logViewer.log(message);
+			logViewer.log(log);
+			logger.info(log);
 		}
 		
 		double timeGap = timeStamp - echoTimeStamp;
@@ -115,24 +117,31 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 			Arrays.fill(chCounter, 0);
 			chCounter[dec(ch)] += 1;
 			
-			logViewer.log(String.format("[%d] = '%c' Pitch detected at %.2fs: %.2fHz", 
-						signalIdx,signal[signalIdx%signal.length], timeStamp, pitch));
+			log = String.format("[%d] = '%c' Pitch detected at %.2fs: %.2fHz", 
+					signalIdx,signal[signalIdx%signal.length], timeStamp, pitch);
+			logViewer.log(log);
+			logger.info(log);
 		} else if(timeGap > signalWindow) {
 			signalIdx++;
 			signal[signalIdx%signal.length] = ch;
 			Arrays.fill(chCounter, 0);
 			chCounter[dec(ch)] += 1;
 			
-			logViewer.log(String.format("[%d] = '%c' Pitch detected at %.2fs: %.2fHz", 
-						signalIdx,signal[signalIdx%signal.length], timeStamp, pitch));
+			log = String.format("[%d] = '%c' Pitch detected at %.2fs: %.2fHz", 
+					signalIdx,signal[signalIdx%signal.length], timeStamp, pitch);
+			logViewer.log(log);
+			logger.info(log);
 			
 			// Full Signal!
 			if(signal.length - 1 == signalIdx) {
-				logViewer.log(String.format("#(%tc) COMMAND = [%c|%c|%c|%c]", 
-						new Date(), signal[0], signal[1], signal[2], signal[3]));
+				log = String.format("#(%tc) COMMAND = [%c|%c|%c|%c]", 
+						new Date(), signal[0], signal[1], signal[2], signal[3]);
+				logViewer.log(log);
+				logger.info(log);
 				processCommand();
 			}
 		} else {
+			// ERROR CORRECTION
 			// how frequent the pitch is.
 			// most frequent one is the one.
 			// for tie, larger char stands.
@@ -140,8 +149,10 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 			char chMax = max(chCounter);
 			if(chMax != ch) {
 				signal[signalIdx%signal.length] = chMax;
-				logViewer.log(String.format("[%d] = '%c' corrected from '%c' at %.2fs", 
-						signalIdx, chMax, ch, timeStamp));
+				log = String.format("[%d] = '%c' corrected from '%c' at %.2fs: %.2fHz", 
+						signalIdx, chMax, ch, timeStamp, pitch);
+				logViewer.log(log);
+				logger.info(log);
 			}
 		}
 		return signal[signalIdx%signal.length];
