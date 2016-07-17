@@ -21,6 +21,9 @@ import java.util.List;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.samples.youtube.cmdline.Auth;
@@ -35,7 +38,8 @@ import com.google.common.collect.Lists;
  * @author Haebin Na
  */
 public class LiveAdsManager {
-
+	final static Logger logger = LoggerFactory.getLogger(LiveAdsManager.class);
+	
     /**
      * Define a global instance of a YoutubePartner object, which will be used
      * to make YouTube Data API requests.

@@ -162,9 +162,12 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 		if(Arrays.equals(ADS_START, signal)) {
 			try {
 				String cuepointId = adsManager.insertAds();
-				logViewer.log(String.format("#(%tc) %s", new Date(), cuepointId));
+				String log = String.format("#(%tc) %s", new Date(), cuepointId);
+				logViewer.log(log);
+				logger.info(log);
 			} catch (Exception e) {
 				logViewer.log(e.getMessage());
+				logger.error("Failed to insert ads.", e);
 			}
 		}
 	}
