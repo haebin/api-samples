@@ -20,7 +20,7 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 	
 	private int signalIdx = 0;
 	private double commandWindow = 1; // in sec.
-	private double signalWindow = 0.04; // in sec.
+	private double signalWindow = 0.10; // in sec.
 	private char signal[] = {' ', ' ', ' ', ' '};
 	
 	private static final char[] ADS_START = "111*".toCharArray();
@@ -107,6 +107,11 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 			logger.info(log);
 		}
 		
+		if(rms < 15) {
+			// small volume then skip after logging!
+			return ' ';
+		}
+		
 		double timeGap = timeStamp - echoTimeStamp;
 		echoTimeStamp = timeStamp;
 		char ch = decodeDtmf(pitch);
@@ -174,7 +179,7 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 	
 	float N1_2 = 172;
 	float N1_1 = 239; 
-	float N1 = 621, N2 = 674, N3 = 730, A = 798;
+	float N1 = 615, N2 = 674, N3 = 730, A = 798;
 	float N4 = 397, N5 = 691, N6 = 745, B = 808;
 	float N7 = 410, N8 = 439, N9 = 763, C = 824;
 	float Na = 306, N0 = 453, Ns = 486, D = 844;
@@ -208,7 +213,7 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 		return ' ';
 	}
 	
-	float bound = 7;
+	float bound = 10;
 	private boolean is(float pitch, float code) {
 		if(code-bound < pitch && pitch < code+bound) {
 			return true;
