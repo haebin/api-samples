@@ -6,11 +6,11 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
+
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.io.TarsosDSPAudioFormat;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
-
-import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
 
 public class DTMFSignalHandlerTest {
 	DTMFSignalHandler handler = new DTMFSignalHandler(new LiveAdsManagerTest(), new LogViewer() {
@@ -65,11 +65,16 @@ public class DTMFSignalHandlerTest {
 		pitch.setProbability(0.82f);	// don't care
 		event.setRMS(0.80); 			// don't care
 		
-		event.setTimeStamp(10.00);
+		double startTime = 10.00;
+		double inSignal = handler.signalWindow - handler.signalWindow/2; 
+		double newSignal = handler.signalWindow + handler.signalWindow/2; 
+		double newCommand = handler.commandWindow + handler.commandWindow/2;
+		
+		event.setTimeStamp(startTime);
 		pitch.setPitch(0);
 		assertEquals(' ', handler.handlePitchInternal(pitch, event));
 		
-		event.setTimeStamp(10.01);
+		event.setTimeStamp(startTime += inSignal);
 		pitch.setPitch(0);
 		assertEquals(' ', handler.handlePitchInternal(pitch, event));
 		
@@ -80,53 +85,54 @@ public class DTMFSignalHandlerTest {
 		// 7:410, 8:439, 9:763, C:824
 		// *:306, 0:453, #:486, D:844
 		
-		event.setTimeStamp(10.11);
+		
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(172);
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(10.13);
+		event.setTimeStamp(startTime += inSignal);
 		pitch.setPitch(1172);	// out of range noise
 		assertEquals(' ', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(10.14);
+		event.setTimeStamp(startTime += inSignal);
 		pitch.setPitch(172);
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(10.16);
+		event.setTimeStamp(startTime += inSignal);
 		pitch.setPitch(691);	// noise
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
 		
 		
-		event.setTimeStamp(10.21);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(1172);	// out of range noise
 		assertEquals(' ', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(10.22);
+		event.setTimeStamp(startTime += inSignal);
 		pitch.setPitch(306);
 		assertEquals('*', handler.handlePitchInternal(pitch, event));
 		
 		// triggers ads insert
-		event.setTimeStamp(11.30);
+		event.setTimeStamp(startTime += newCommand);
 		pitch.setPitch(172);	
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(11.35);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(176);	
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(11.40);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(176);	
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(11.45);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(306);	
 		assertEquals('*', handler.handlePitchInternal(pitch, event));
 		
 		
 		// triggers ads insert
-		event.setTimeStamp(13.30);
+		event.setTimeStamp(startTime += newCommand);
 		pitch.setPitch(172);	
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(13.35);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(176);	
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(13.40);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(176);	
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(13.45);
+		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(486);	
 		assertEquals('#', handler.handlePitchInternal(pitch, event));
 		

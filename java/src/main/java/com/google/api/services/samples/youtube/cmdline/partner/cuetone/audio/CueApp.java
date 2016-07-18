@@ -57,11 +57,12 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 	private PitchEstimationAlgorithm algo;
 	private double pitch;
 
+	// Main features to tune
 	private float sampleRate = 44100;
 	private int bufferSize = 4096;
 	private int overlap = 512;
-	// private int bufferSize = 1024 * 4;
-	// private int overlap = 768 * 4 ;
+	// private int bufferSize = 1024;
+	// private int overlap = 256;
 
 	private JTextArea logViewer;
 	private JTextField channel = new JTextField(12);
@@ -75,8 +76,6 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 	private PitchDetectionHandler pitchHandler = new DTMFSignalHandler(
 			adsManager, this);
 
-	private boolean verbose = false;
-	
 	public CueApp() {
 		logger.info("YT Live Ads Man started. --------------------------------------------------");
 		this.setLayout(new BorderLayout());

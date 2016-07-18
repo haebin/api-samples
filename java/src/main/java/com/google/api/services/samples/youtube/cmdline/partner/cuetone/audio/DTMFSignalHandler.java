@@ -15,12 +15,12 @@ import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
 public class DTMFSignalHandler implements PitchDetectionHandler {
 	final static Logger logger = LoggerFactory.getLogger(DTMFSignalHandler.class);
 	
-	//private boolean rawLog = true;
-	private double echoTimeStamp = 0;
+	// Main features to tune
+	public double commandWindow = 1; // in sec.
+	public double signalWindow = 0.10; // in sec.
 	
+	private double echoTimeStamp = 0;
 	private int signalIdx = 0;
-	private double commandWindow = 1; // in sec.
-	private double signalWindow = 0.10; // in sec.
 	private char signal[] = {' ', ' ', ' ', ' '};
 	
 	private static final char[] ADS_START = "111*".toCharArray();
