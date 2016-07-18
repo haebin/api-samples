@@ -1,122 +1,221 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.google.api.services.samples.youtube.cmdline</groupId>
-    <artifactId>samples</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+	<groupId>com.google.api.services.samples.youtube.cmdline</groupId>
+	<artifactId>samples</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-    <name>youtube-api-cmdline-samples</name>
-    <url>http://maven.apache.org</url>
+	<name>youtube-api-cmdline-samples</name>
+	<url>http://maven.apache.org</url>
 
-    <properties>
-    	
-        <project.youtube.version>v3-rev175-1.22.0</project.youtube.version>
-        <project.youtube.analytics.version>v1-rev61-1.22.0</project.youtube.analytics.version>
-        <project.youtube.reporting.version>v1-rev9-1.22.0</project.youtube.reporting.version>
-        <project.http.version>1.22.0</project.http.version>
-        <project.oauth.version>1.22.0</project.oauth.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+	<properties>
+		<project.youtube.version>v3-rev175-1.22.0</project.youtube.version>
+		<project.youtube.analytics.version>v1-rev61-1.22.0</project.youtube.analytics.version>
+		<project.youtube.reporting.version>v1-rev9-1.22.0</project.youtube.reporting.version>
+		<project.http.version>1.22.0</project.http.version>
+		<project.oauth.version>1.22.0</project.oauth.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-    <repositories>
-        <repository>
-            <id>google-api-services</id>
-            <url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>google-api-services</id>
+			<url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
+		</repository>
+	</repositories>
 
-    <dependencies>
+	<profiles>
+		<profile>
+			<id>production-cueapp</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>2.3.2</version>
+						<configuration>
+							<debug>false</debug>
+							<optimize>true</optimize>
+							<source>1.6</source>
+							<target>1.6</target>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/app</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/resources</directory>
+											<includes>
+												<include>logback.xml</include>
+												<include>client_secrets.json</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/app/lib</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>false</overWriteSnapshots>
+									<overWriteIfNewer>true</overWriteIfNewer>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>default-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<archive>
+										<index>true</index>
+										<manifest>
+											<addClasspath>true</addClasspath>
+											<classpathPrefix>lib/</classpathPrefix>
+											<mainClass>com.google.api.services.samples.youtube.cmdline.partner.cuetone.audio.CueApp</mainClass>
+										</manifest>
+										<manifestEntries>
+											<Class-Path>conf/</Class-Path>
+										</manifestEntries>
+									</archive>
+									<includes>
+										<include>**/cmdline/Auth.class</include>
+										<include>**/cmdline/partner/**</include>
+									</includes>
+									<finalName>app/CueApp</finalName>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-        <!-- YouTube Data V3 support -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-youtube</artifactId>
-            <version>${project.youtube.version}</version>
-        </dependency>
+	<dependencies>
 
-        <!-- Required for any code that makes calls to the Google Analytics API -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-youtubeAnalytics</artifactId>
-            <version>${project.youtube.analytics.version}</version>
-        </dependency>
-        
-        <!-- Required for reporting -->
-        <dependency>
-		    <groupId>com.google.apis</groupId>
-		    <artifactId>google-api-services-youtubereporting</artifactId>
-		    <version>${project.youtube.reporting.version}</version>
-		</dependency>
-        
-        <!-- Required for audio processing (Cuetone ads sample, local install only) -->
-        <!-- Download from https://github.com/JorenSix/TarsosDSP v2.3 -->
-        <!-- git clone -b v2.3 https://github.com/JorenSix/TarsosDSP.git -->
-        <!-- mvn install:install-file -Dfile=/Users/SOMEBODY/Workspace/TarsosDSP/build/TarsosDSP-2.3.jar -DgroupId=be.tarsos.dsp -DartifactId=TarsosDSP -Dversion=2.3 -Dpackaging=jar -->
+		<!-- YouTube Data V3 support -->
 		<dependency>
-            <groupId>be.tarsos.dsp</groupId>
-            <artifactId>TarsosDSP</artifactId>
-            <version>2.3</version>
-        </dependency>
-        <dependency> 
-		  <groupId>ch.qos.logback</groupId>
-		  <artifactId>logback-classic</artifactId>
-		  <version>1.0.13</version>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-youtube</artifactId>
+			<version>${project.youtube.version}</version>
+		</dependency>
+
+		<!-- Required for any code that makes calls to the Google Analytics API -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-youtubeAnalytics</artifactId>
+			<version>${project.youtube.analytics.version}</version>
+		</dependency>
+
+		<!-- Required for reporting -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-youtubereporting</artifactId>
+			<version>${project.youtube.reporting.version}</version>
+		</dependency>
+
+		<!-- Required for audio processing (Cuetone ads sample, local install only) -->
+		<!-- Download from https://github.com/JorenSix/TarsosDSP v2.3 -->
+		<!-- git clone -b v2.3 https://github.com/JorenSix/TarsosDSP.git -->
+		<!-- mvn install:install-file -Dfile=/Users/SOMEBODY/Workspace/TarsosDSP/build/TarsosDSP-2.3.jar 
+			-DgroupId=be.tarsos.dsp -DartifactId=TarsosDSP -Dversion=2.3 -Dpackaging=jar -->
+		<dependency>
+			<groupId>be.tarsos.dsp</groupId>
+			<artifactId>TarsosDSP</artifactId>
+			<version>2.3</version>
 		</dependency>
 		
-        <!-- This dependency is only used for the Topics API sample, which requires the Jackson JSON parser -->
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client-jackson2</artifactId>
-            <version>${project.http.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client-jetty</artifactId>
-            <version>${project.oauth.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
-        </dependency>
-        
-        <!-- for CLI parser-->
-        <dependency>
-		    <groupId>net.sf.jopt-simple</groupId>
-		    <artifactId>jopt-simple</artifactId>
-		    <version>5.0.2</version>
+		<!-- Logging -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.13</version>
 		</dependency>
-        
+
+		<!-- This dependency is only used for the Topics API sample, which requires 
+			the Jackson JSON parser -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.http-client</groupId>
+			<artifactId>google-http-client-jackson2</artifactId>
+			<version>${project.http.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>${project.oauth.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- for CLI parser (Live Ads) -->
+		<dependency>
+			<groupId>net.sf.jopt-simple</groupId>
+			<artifactId>jopt-simple</artifactId>
+			<version>5.0.2</version>
+		</dependency>
+
 		<!-- for testing -->
 		<dependency>
-		    <groupId>junit</groupId>
-		    <artifactId>junit</artifactId>
-		    <version>4.12</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
-    </dependencies>
+	</dependencies>
 
-    <build>
-        <plugins>
-            <!-- Forces Maven to use Java 1.6 -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <compilerArgument></compilerArgument>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<plugins>
+			<!-- Forces Maven to use Java 1.6 -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<compilerArgument></compilerArgument>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
