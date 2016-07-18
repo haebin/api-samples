@@ -56,6 +56,7 @@
 									<resources>
 										<resource>
 											<directory>src/main/resources</directory>
+											<targetPath>conf/</targetPath>
 											<includes>
 												<include>logback.xml</include>
 												<include>client_secrets.json</include>
