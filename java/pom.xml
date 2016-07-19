@@ -105,9 +105,6 @@
 											<classpathPrefix>lib/</classpathPrefix>
 											<mainClass>com.google.api.services.samples.youtube.cmdline.partner.cuetone.audio.CueApp</mainClass>
 										</manifest>
-										<manifestEntries>
-											<Class-Path>conf/</Class-Path>
-										</manifestEntries>
 									</archive>
 									<includes>
 										<include>**/cmdline/Auth.class</include>
