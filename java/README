@@ -25,9 +25,8 @@ YouTube API samples, see this video:
 To build ads cuepoint insertion manager, you need to download TarsosDSP v2.3 
 from https://github.com/JorenSix/TarsosDSP and install it first.
 
-
 	git clone -b v2.3 https://github.com/JorenSix/TarsosDSP.git
-	cd TarsosDSP; ant 
+	cd TarsosDSP/build; ant 
 	mvn install:install-file -Dfile=/<SOMEDIR>/TarsosDSP/build/TarsosDSP-2.3.jar -DgroupId=be.tarsos.dsp -DartifactId=TarsosDSP -Dversion=2.3 -Dpackaging=jar
 	mvn clean package -P production-cueapp
 	
