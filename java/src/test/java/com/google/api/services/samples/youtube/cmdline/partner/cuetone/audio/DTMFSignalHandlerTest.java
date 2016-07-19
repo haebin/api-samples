@@ -89,10 +89,10 @@ public class DTMFSignalHandlerTest {
 		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(172);
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(startTime += inSignal);
+		event.setTimeStamp(startTime += inSignal/3);
 		pitch.setPitch(1172);	// out of range noise
 		assertEquals(' ', handler.handlePitchInternal(pitch, event));
-		event.setTimeStamp(startTime += inSignal);
+		event.setTimeStamp(startTime += inSignal/3);
 		pitch.setPitch(172);
 		assertEquals('1', handler.handlePitchInternal(pitch, event));
 		event.setTimeStamp(startTime += inSignal);
@@ -135,6 +135,32 @@ public class DTMFSignalHandlerTest {
 		event.setTimeStamp(startTime += newSignal);
 		pitch.setPitch(486);	
 		assertEquals('#', handler.handlePitchInternal(pitch, event));
+	
+		
+		
+		/*
+		[0] = 'D' Pitch detected at 69.50s: 844.63Hz
+		Pitch detected at 69.58s: 844.65Hz ( 0.83 probability, RMS: 40.06602 )
+		Pitch detected at 69.66s: 844.60Hz ( 0.83 probability, RMS: 37.10871 )
+		Pitch detected at 70.96s: 233.80Hz ( 0.83 probability, RMS: 31.84202 )
+		[0] = '1' Pitch detected at 70.96s: 233.80Hz
+		Pitch detected at 71.04s: 844.43Hz ( 0.83 probability, RMS: 40.06220 )
+		Pitch detected at 71.12s: 844.50Hz ( 0.83 probability, RMS: 40.04284 )
+		Pitch detected at 71.20s: 844.49Hz ( 0.80 probability, RMS: 19.40474 )
+		*/
+		
+		event.setTimeStamp(startTime += newSignal);
+		pitch.setPitch(233.80f);	
+		assertEquals('1', handler.handlePitchInternal(pitch, event));
+		event.setTimeStamp(startTime += inSignal);
+		pitch.setPitch(844.43f);
+		assertEquals('D', handler.handlePitchInternal(pitch, event));
+		event.setTimeStamp(startTime += inSignal);
+		pitch.setPitch(844.50f);
+		assertEquals('D', handler.handlePitchInternal(pitch, event));
+		event.setTimeStamp(startTime += inSignal);
+		pitch.setPitch(844.49f);
+		assertEquals('D', handler.handlePitchInternal(pitch, event));
 		
 	}
 	

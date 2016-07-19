@@ -17,7 +17,7 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 	
 	// Main features to tune
 	public double commandWindow = 1; // in sec.
-	public double signalWindow = 0.10; // in sec.
+	public double signalWindow = 0.07; // in sec.
 	
 	private double echoTimeStamp = 0;
 	private int signalIdx = 0;
@@ -152,10 +152,11 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 			// for tie, larger char stands.
 			chCounter[dec(ch)] += 1;
 			char chMax = max(chCounter);
-			if(chMax != ch) {
+			if(chMax != signal[signalIdx%signal.length]) {
+				char oldCh = signal[signalIdx%signal.length];
 				signal[signalIdx%signal.length] = chMax;
 				log = String.format("[%d] = '%c' corrected from '%c' at %.2fs: %.2fHz", 
-						signalIdx, chMax, ch, timeStamp, pitch);
+						signalIdx, chMax, oldCh, timeStamp, pitch);
 				logViewer.log(log);
 				logger.info(log);
 			}
@@ -179,42 +180,42 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 	
 	float N1_2 = 172;
 	float N1_1 = 239; 
-	float N1 = 615, N2 = 674, N3 = 730, A = 798;
+	float N1 = 625, N2 = 674, N3 = 730, A = 798;
 	float N4 = 397, N5 = 691, N6 = 745, B = 808;
 	float N7 = 410, N8 = 439, N9 = 763, C = 824;
 	float Na = 306, N0 = 453, Ns = 486, D = 844;
 
-	// 1:621~7, 239~7, 172~7 
-	// 1:625, 2:674, 3:730, A:798
-	// 4:397, 5:691, 6:745, B:808
-	// 7:410, 8:439, 9:763, C:824
-	// *:306, 0:453, #:486, D:844
+	// 1:621~20, 239~10, 172~10 
+	// 1:625 (605~645), 2:674 (669~679), 3:730 (725~735), A:798 (793~803)
+	// 4:397 (392~402), 5:691 (686~696), 6:745 (740~750), B:808 (803~813)
+	// 7:410 (405~415), 8:439 (434~444), 9:763 (753~773), C:824 (814~834)
+	// *:306 (296~316), 0:453 (448~458), #:486 (476~496), D:844 (834~854)
+	float bound = 10;
 	private char decodeDtmf(float echo) {
-		if(is(echo, N1)) return '1';
-		if(is(echo, N1_1)) return '1';
-		if(is(echo, N1_2)) return '1';	
-		if(is(echo, Na)) return '*';
-		if(is(echo, Ns)) return '#';
+		if(is(echo, N1, bound*2)) return '1';
+		if(is(echo, N1_1, bound)) return '1';
+		if(is(echo, N1_2, bound)) return '1';	
+		if(is(echo, Na, bound)) return '*';
+		if(is(echo, Ns, bound)) return '#';
 		
-		if(is(echo, N2)) return '2';
-		if(is(echo, N3)) return '3';
-		if(is(echo, N4)) return '4';
-		if(is(echo, N5)) return '5';
-		if(is(echo, N6)) return '6';
-		if(is(echo, N7)) return '7';
-		if(is(echo, N8)) return '8';
-		if(is(echo, N9)) return '9';
-		if(is(echo, N0)) return '0';
+		if(is(echo, N2, bound/2)) return '2';
+		if(is(echo, N3, bound/2)) return '3';
+		if(is(echo, N4, bound/2)) return '4';
+		if(is(echo, N5, bound/2)) return '5';
+		if(is(echo, N6, bound/2)) return '6';
+		if(is(echo, N7, bound/2)) return '7';
+		if(is(echo, N8, bound/2)) return '8';
+		if(is(echo, N9, bound)) return '9';
+		if(is(echo, N0, bound/2)) return '0';
 		
-		if(is(echo, A)) return 'A';
-		if(is(echo, B)) return 'B';
-		if(is(echo, C)) return 'C';
-		if(is(echo, D)) return 'D';
+		if(is(echo, A, bound/2)) return 'A';
+		if(is(echo, B, bound/2)) return 'B';
+		if(is(echo, C, bound)) return 'C';
+		if(is(echo, D, bound)) return 'D';
 		return ' ';
 	}
 	
-	float bound = 10;
-	private boolean is(float pitch, float code) {
+	private boolean is(float pitch, float code, float bound) {
 		if(code-bound < pitch && pitch < code+bound) {
 			return true;
 		}

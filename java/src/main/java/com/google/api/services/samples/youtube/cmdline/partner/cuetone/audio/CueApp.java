@@ -61,8 +61,8 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 	private float sampleRate = 44100;
 	private int bufferSize = 4096;
 	private int overlap = 512;
-	// private int bufferSize = 1024;
-	// private int overlap = 256;
+	//private int bufferSize = 1024;
+	//private int overlap = 256;
 
 	private JTextArea logViewer;
 	private JTextField channel = new JTextField(12);
