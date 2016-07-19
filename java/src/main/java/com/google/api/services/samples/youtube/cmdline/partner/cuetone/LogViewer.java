@@ -1,4 +1,4 @@
-package com.google.api.services.samples.youtube.cmdline.partner.cuetone.audio;
+package com.google.api.services.samples.youtube.cmdline.partner.cuetone;
 
 public interface LogViewer {
 	public void log(String message);

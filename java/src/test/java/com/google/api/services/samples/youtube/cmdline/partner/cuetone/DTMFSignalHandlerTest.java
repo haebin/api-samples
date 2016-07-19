@@ -1,4 +1,4 @@
-package com.google.api.services.samples.youtube.cmdline.partner.cuetone.audio;
+package com.google.api.services.samples.youtube.cmdline.partner.cuetone;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
+import com.google.api.services.samples.youtube.cmdline.partner.cuetone.DTMFSignalHandler;
+import com.google.api.services.samples.youtube.cmdline.partner.cuetone.LogViewer;
 
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.io.TarsosDSPAudioFormat;
