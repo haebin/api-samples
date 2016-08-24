@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -43,7 +44,7 @@ import be.tarsos.dsp.util.fft.FFT;
 
 import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
 
-public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
+public class CueApp extends JFrame implements PitchDetectionHandler {
 	final static Logger logger = LoggerFactory.getLogger(CueApp.class);
 	
 	/**
@@ -76,6 +77,12 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 	private PitchDetectionHandler pitchHandler = new DTMFSignalHandler(
 			adsManager, this);
 
+	public String videoId = "";
+    public String contentOwnerId = "";
+    public String channelId = "";
+    public Long duration = LiveAdsManager.DEF_DURATION;
+    public int adCalls = LiveAdsManager.DEF_ADCALLS;
+	
 	public CueApp() {
 		logger.info("YT Live Ads Man started. --------------------------------------------------");
 		this.setLayout(new BorderLayout());
@@ -136,10 +143,30 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+					JOptionPane.showMessageDialog(null, "Choose top most main profile, not the channel profile.\nIf browser doesn't show the login page then it's already authenticated.\nTo reset the credential, logout and login.");
 					adsManager.login();
 				} catch(Exception ie) {
 					log(ie.getMessage());
 					logger.error("Failed to login for API.", ie);
+				}
+			}});
+		
+		JButton validate = new JButton("Insert Ads");
+		validate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(videoId.equals("") || channelId.equals("") || contentOwnerId.equals("")) {
+						JOptionPane.showMessageDialog(null, "Needs Video ID, Channel ID and Content Owner ID to validate the crediential.\nIf you set then please click 'Apply'.");
+						return;
+					}
+					
+					String ids = adsManager.insertAds(videoId, channelId, contentOwnerId, duration, adCalls);
+					log("Ads IDs: " + ids);
+					logger.info("Ads IDs: " + ids);
+				} catch(Exception ie) {
+					log(ie.getMessage());
+					logger.error("Failed to validate the credential.", ie);
 				}
 			}});
 		
@@ -149,6 +176,7 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					adsManager.logout();
+					JOptionPane.showMessageDialog(null, "Cleared saved credential.");
 				} catch (Exception ie) {
 					log(ie.getMessage());
 					logger.error("Failed to clear login credential", ie);
@@ -159,12 +187,12 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 		apply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				adsManager.channelId = channel.getText();
-				adsManager.contentOwnerId = contentOwner.getText();
-				adsManager.videoId = video.getText();
+				channelId = channel.getText();
+				contentOwnerId = contentOwner.getText();
+				videoId = video.getText();
 				try {
-					adsManager.num = Integer.parseInt(adsNumber.getText());
-				    adsManager.duration = Long.parseLong(adsDuration.getText());
+					adCalls = Integer.parseInt(adsNumber.getText());
+				    duration = Long.parseLong(adsDuration.getText());
 				} catch (Exception ie) {
 					log(ie.getMessage());
 					logger.error("Failed to parse parameter numbers.", ie);
@@ -175,17 +203,14 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 		channel.setToolTipText("Channel ID starting with UC.");
 		video.setToolTipText("Live streaming video ID.");
 		
-		adsDuration.setText(adsManager.duration + "");
-		adsNumber.setText(adsManager.num + "");
+		adsDuration.setText(duration + "");
+		adsNumber.setText(adCalls + "");
 		
 		app.add(login);
+		app.add(validate);
 		app.add(logout);
 		app.add(new JLabel("Ads: Duration"));
 		app.add(adsDuration);
-		app.add(new JLabel("Podding"));
-		app.add(adsNumber);
-		
-		//app.add(clearLog);
 		
 		live.add(new JLabel("CO"));
 		live.add(contentOwner);
@@ -193,10 +218,13 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 		live.add(channel);
 		live.add(new JLabel("Video"));
 		live.add(video);
+		live.add(new JLabel("Ads"));
+		live.add(adsNumber);
+		
 		live.add(apply);
 		
-		controllerPanel.add(app, BorderLayout.NORTH);
-		controllerPanel.add(live, BorderLayout.SOUTH);
+		controllerPanel.add(live, BorderLayout.NORTH);
+		controllerPanel.add(app, BorderLayout.SOUTH);
 		
 		this.add(controllerPanel, BorderLayout.SOUTH);
 
@@ -207,13 +235,11 @@ public class CueApp extends JFrame implements PitchDetectionHandler, LogViewer {
 		this.add(otherContainer, BorderLayout.CENTER);
 	}
 	
-	@Override
 	public void log(String message) {
 		logViewer.append(message + "\n");
 		logViewer.setCaretPosition(logViewer.getDocument().getLength());
 	}
 	
-	@Override
 	public boolean isVerbose() {
 		return verboseLog.isSelected();
 	}

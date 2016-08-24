@@ -44,17 +44,12 @@ public class LiveAdsManager {
      * Define a global instance of a YoutubePartner object, which will be used
      * to make YouTube Data API requests.
      */
-    private YouTubePartner youtubePartner;
     private Credential credential = null;
     private static boolean verbose = false;
     
-    public String videoId = "";
-    public String contentOwnerId = "";
-    public String channelId = "";
-    public Long duration = 120L;
-    public int num = 1;
-    
     private static final String DATASTORE = "ads";
+    public static final Long DEF_DURATION = 120L;
+    public static final int DEF_ADCALLS = 1;
     
     private static OptionParser parser = new OptionParser() {{
     	acceptsAll(Arrays.asList( "o", "owner" ), "Content Owner ID: The value of 'o' parameter on CMS main page.")
@@ -71,14 +66,15 @@ public class LiveAdsManager {
 			.withOptionalArg().ofType(Integer.class).describedAs("Number of Ads").defaultsTo(1);
     	accepts( "h", "Show this help." ).forHelp();
     }};
-    
+      
     public void login() throws Exception {
-		// This OAuth 2.0 access scope allows for read-only access to the
+    	// This OAuth 2.0 access scope allows for read-only access to the
         // authenticated user's account, but not other types of account access.
         List<String> scopes = Lists.newArrayList(
         		"https://www.googleapis.com/auth/youtube.readonly",
         		"https://www.googleapis.com/auth/youtubepartner");
         credential = Auth.authorize(scopes, DATASTORE);
+        
     }
     
     public void logout() throws Exception {
@@ -102,17 +98,26 @@ public class LiveAdsManager {
     		manager.logout();
     	manager.login();
     	
-    	manager.videoId = (String)opts.valueOf("v");
-    	manager.channelId = (String)opts.valueOf("c");
-    	manager.contentOwnerId = (String)opts.valueOf("o");
-    	if(opts.has("d"))
-    		manager.duration = Long.parseLong((String)opts.valueOf("d"));
+    	String videoId = (String)opts.valueOf("v");
+    	String channelId = (String)opts.valueOf("c");
+    	String contentOwnerId = (String)opts.valueOf("o");
     	
-    	System.out.print(manager.insertAds());
+    	
+    	Long duration = DEF_DURATION;
+    	if(opts.has("d"))
+    		duration = Long.parseLong((String)opts.valueOf("d"));
+    	int adCalls = DEF_ADCALLS;
+    	if(opts.has("n"))
+    		adCalls = Integer.parseInt((String)opts.valueOf("n"));
+    	
+    	System.out.print(manager.insertAds(videoId, channelId, contentOwnerId, duration, adCalls));
     }
     
-    public String insertAds() throws Exception {
-        youtubePartner = new YouTubePartner(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential);
+    public String insertAds(String videoId, String channelId, String contentOwnerId, Long duration, int adCalls) throws Exception {
+    	// so, you don't need to login every time app restarts.
+    	login();
+    	
+    	YouTubePartner youtubePartner = new YouTubePartner(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential);
         LiveCuepointsSettings setting = new LiveCuepointsSettings();
         setting.setCueType("ad");
         setting.setDurationSecs(duration);
@@ -127,7 +132,7 @@ public class LiveAdsManager {
         
         StringBuffer buf = new StringBuffer();
         LiveCuepoints cuepoint;
-        for(int i = 0; i<num; i++) {
+        for(int i = 0; i<adCalls; i++) {
         	cuepoint = insertRequest.execute();
         	buf.append(cuepoint.getId()).append(";");
         	
@@ -141,6 +146,8 @@ public class LiveAdsManager {
                 System.out.println("  - CueType: " + cuepoint.getSettings().getDurationSecs());
                 System.out.println("\n-------------------------------------------------------\n");
             }
+            
+           
         }
         return buf.toString();
     }

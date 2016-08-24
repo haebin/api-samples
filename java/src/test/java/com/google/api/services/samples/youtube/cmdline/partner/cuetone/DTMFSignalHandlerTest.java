@@ -6,25 +6,14 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
-import com.google.api.services.samples.youtube.cmdline.partner.cuetone.DTMFSignalHandler;
-import com.google.api.services.samples.youtube.cmdline.partner.cuetone.LogViewer;
-
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.io.TarsosDSPAudioFormat;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 
+import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
+
 public class DTMFSignalHandlerTest {
-	DTMFSignalHandler handler = new DTMFSignalHandler(new LiveAdsManagerTest(), new LogViewer() {
-		@Override
-		public void log(String message) {
-			System.out.println(message);
-		}
-		@Override
-		public boolean isVerbose() {
-			return true;
-		}
-	});
+	DTMFSignalHandler handler = new DTMFSignalHandler(new LiveAdsManagerTest(), new CueApp());
 	
 	@Test
 	public void testDec() {

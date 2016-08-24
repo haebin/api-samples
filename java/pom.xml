@@ -153,12 +153,23 @@
 			<artifactId>TarsosDSP</artifactId>
 			<version>2.3</version>
 		</dependency>
-		
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.13</version>
+		</dependency>
+		<!-- for SMTP appender -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>2.7.8</version>
 		</dependency>
 
 		<!-- This dependency is only used for the Topics API sample, which requires 

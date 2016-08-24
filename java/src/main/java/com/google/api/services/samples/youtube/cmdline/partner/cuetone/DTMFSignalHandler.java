@@ -29,10 +29,10 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 	private int[] chCounter = new int[17];
 	
 	private final LiveAdsManager adsManager;
-	private final LogViewer logViewer;
+	private final CueApp cueApp;
 
-	public DTMFSignalHandler(LiveAdsManager adsManager, LogViewer logViewer) {
-		this.logViewer = logViewer;
+	public DTMFSignalHandler(LiveAdsManager adsManager, CueApp cueApp) {
+		this.cueApp = cueApp;
 		this.adsManager = adsManager;
 	}
 	
@@ -100,10 +100,10 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 		}
 		
 		String log = "";
-		if(logViewer.isVerbose()) {
+		if(cueApp.isVerbose()) {
 			log = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )", 
 					timeStamp, pitch, probability, rms);
-			logViewer.log(log);
+			cueApp.log(log);
 			logger.info(log);
 		}
 		
@@ -124,7 +124,7 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 			
 			log = String.format("[%d] = '%c' Pitch detected at %.2fs: %.2fHz", 
 					signalIdx,signal[signalIdx%signal.length], timeStamp, pitch);
-			logViewer.log(log);
+			cueApp.log(log);
 			logger.info(log);
 		} else if(timeGap > signalWindow) {
 			signalIdx++;
@@ -134,14 +134,14 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 			
 			log = String.format("[%d] = '%c' Pitch detected at %.2fs: %.2fHz", 
 					signalIdx,signal[signalIdx%signal.length], timeStamp, pitch);
-			logViewer.log(log);
+			cueApp.log(log);
 			logger.info(log);
 			
 			// Full Signal!
 			if(signal.length - 1 == signalIdx) {
 				log = String.format("#(%tc) COMMAND = [%c|%c|%c|%c]", 
 						new Date(), signal[0], signal[1], signal[2], signal[3]);
-				logViewer.log(log);
+				cueApp.log(log);
 				logger.info(log);
 				processCommand();
 			}
@@ -157,7 +157,7 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 				signal[signalIdx%signal.length] = chMax;
 				log = String.format("[%d] = '%c' corrected from '%c' at %.2fs: %.2fHz", 
 						signalIdx, chMax, oldCh, timeStamp, pitch);
-				logViewer.log(log);
+				cueApp.log(log);
 				logger.info(log);
 			}
 		}
@@ -167,12 +167,12 @@ public class DTMFSignalHandler implements PitchDetectionHandler {
 	private void processCommand() {
 		if(Arrays.equals(ADS_START, signal)) {
 			try {
-				String cuepointId = adsManager.insertAds();
+				String cuepointId = adsManager.insertAds(cueApp.videoId, cueApp.channelId, cueApp.contentOwnerId, cueApp.duration, cueApp.adCalls);
 				String log = String.format("#(%tc) %s", new Date(), cuepointId);
-				logViewer.log(log);
+				cueApp.log(log);
 				logger.info(log);
 			} catch (Exception e) {
-				logViewer.log(e.getMessage());
+				cueApp.log(e.getMessage());
 				logger.error("Failed to insert ads.", e);
 			}
 		}
