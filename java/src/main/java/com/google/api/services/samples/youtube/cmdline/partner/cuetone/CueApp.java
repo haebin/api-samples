@@ -192,7 +192,7 @@ public class CueApp extends JFrame implements PitchDetectionHandler {
 				videoId = video.getText();
 				try {
 					adCalls = Integer.parseInt(adsNumber.getText());
-				    duration = Long.parseLong(adsDuration.getText());
+				    //duration = Long.parseLong(adsDuration.getText());
 				} catch (Exception ie) {
 					log(ie.getMessage());
 					logger.error("Failed to parse parameter numbers.", ie);
@@ -203,14 +203,14 @@ public class CueApp extends JFrame implements PitchDetectionHandler {
 		channel.setToolTipText("Channel ID starting with UC.");
 		video.setToolTipText("Live streaming video ID.");
 		
-		adsDuration.setText(duration + "");
+		//adsDuration.setText(duration + "");
 		adsNumber.setText(adCalls + "");
 		
 		app.add(login);
 		app.add(validate);
 		app.add(logout);
-		app.add(new JLabel("Ads: Duration"));
-		app.add(adsDuration);
+		//app.add(new JLabel("Ads: Duration"));
+		//app.add(adsDuration);
 		
 		live.add(new JLabel("CO"));
 		live.add(contentOwner);
