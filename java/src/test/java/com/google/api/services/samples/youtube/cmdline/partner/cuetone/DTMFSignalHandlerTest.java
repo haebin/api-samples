@@ -10,10 +10,8 @@ import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.io.TarsosDSPAudioFormat;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 
-import com.google.api.services.samples.youtube.cmdline.partner.LiveAdsManager;
-
 public class DTMFSignalHandlerTest {
-	DTMFSignalHandler handler = new DTMFSignalHandler(new LiveAdsManagerTest(), new CueApp());
+	DTMFSignalHandler handler = new DTMFSignalHandler(null, new CueApp());
 	
 	@Test
 	public void testDec() {
@@ -181,13 +179,6 @@ public class DTMFSignalHandlerTest {
 		
 		public AudioEventTest(TarsosDSPAudioFormat format) {
 			super(format);
-		}
-	}
-	
-	class LiveAdsManagerTest extends LiveAdsManager {
-		public String insertAds() throws Exception {
-			System.out.println("Ads Inserted");
-			return "";
 		}
 	}
 }

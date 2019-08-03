@@ -32,17 +32,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>2.3.2</version>
-						<configuration>
-							<debug>false</debug>
-							<optimize>true</optimize>
-							<source>1.6</source>
-							<target>1.6</target>
-						</configuration>
-					</plugin>
-					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
 						<version>3.0.1</version>
 						<executions>
@@ -149,10 +138,15 @@
 		<!-- mvn install:install-file -Dfile=/Users/SOMEBODY/Workspace/TarsosDSP/build/TarsosDSP-2.3.jar 
 			-DgroupId=be.tarsos.dsp -DartifactId=TarsosDSP -Dversion=2.3 -Dpackaging=jar -->
 		<dependency>
+    			<groupId>com.github.axet</groupId>
+    			<artifactId>TarsosDSP</artifactId>
+    			<version>2.4-1</version>
+		</dependency>
+		<!--<dependency>
 			<groupId>be.tarsos.dsp</groupId>
 			<artifactId>TarsosDSP</artifactId>
 			<version>2.3</version>
-		</dependency>
+		</dependency>-->
 
 		<!-- Logging -->
 		<dependency>
