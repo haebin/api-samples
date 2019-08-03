@@ -1,5 +1,5 @@
 Prerequisites for this code sample:
-- Latest JDK (targets 1.7) 
+- JDK 1.8 
 - Apache Maven (http://maven.apache.org)
 
 Before running the sample, client_secrets.json must be populated with a
