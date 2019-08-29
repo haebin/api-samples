@@ -27,3 +27,10 @@ Build as follows:
 Under target/app, you can run it by start script after setting the client_secrets.json.
 
 			
+### LiveChatReacter
+Build as follows:
+	mvn clean package -P production-chatty
+
+Under target/app.
+
+ * Mac: System Preferences > Accessbility > Java.
