@@ -1,6 +1,7 @@
 /target/
 /logs/
+/src/main/resources/client_secrets.json
 /.settings/
 /.classpath
-/.DS_Store
+/**/.DS_Store
 /.project
